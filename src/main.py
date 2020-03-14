@@ -6,7 +6,7 @@ __version__ = "1.0"
 __maintainer__ = "Abdurrahman M. A. Basher"
 __email__ = "ar.basher@alumni.ubc.ca"
 __status__ = "Production"
-__description__ = "This file is the main entry to perform learning and prediction on dataset using path2vec model."
+__description__ = "This file is the main entry to perform learning and prediction on dataset using pathway2vec model."
 
 import datetime
 import json
