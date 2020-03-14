@@ -55,30 +55,30 @@ To generate walks, we provide few examples:
 #### Example 1
 To generate *node2vec* random walks, execute the following command:
 
-``python main.py --extract-instance --q 0.5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+``python main.py --extract-instance --q 0.5 --walk-length 10 --num-walks 5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
 
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents in-out parameter that allows the search to differentiate between "inward" and "outward" nodes. The return parameter that controls the likelihood of immediately revisiting a node in the walk will be automatically adjusted.
+where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents in-out parameter that allows the search to differentiate between "inward" and "outward" nodes. The return parameter that controls the likelihood of immediately revisiting a node in the walk will be automatically adjusted.  The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
 
 #### Example 2
 To generate *metapath2vec* random walks, execute the following command:
 
-``python main.py --extract-instance --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+``python main.py --extract-instance --walk-length 10 --num-walks 5 --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
 
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension.
+where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
 
 #### Example 3
 To generate *JUST* random walks, execute the following command:
 
-``python main.py --extract-instance --q 0.5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
-
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension.
+``python main.py --extract-instance --q 0.5 --walk-length 10 --num-walks 5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+    
+where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
 
 #### Example 4
 To generate *RUST* random walks, execute the following command with :
 
-``python main.py --extract-instance --burn-in-phase 3 --q 0.3 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+``python main.py --extract-instance --burn-in-phase 3 --q 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
 
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation.
+where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
 
 ### Train
 To learn embeddings using the random walks, we provide few examples:

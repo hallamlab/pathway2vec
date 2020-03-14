@@ -11,7 +11,7 @@ import os
 import sys
 import time
 import warnings
-from multiprocessing import Pool, RawArray
+from sklearn.utils._joblib import Parallel, delayed
 from scipy.sparse import lil_matrix
 from utility.access_file import save_data
 
@@ -245,21 +245,12 @@ class MetaPathGraph(object):
         init_node_prob = init_node_prob.multiply(1 / tmp)
         return init_node_prob, type2index, type2prob
 
-    def _init_worker(self, X, N):
-        global var_dict
-        var_dict = {}
-        var_dict['X'] = X
-        var_dict['N'] = N
-
-    def _walks_per_node(self, node_idx, node_curr, node_curr_data, hin, just_memory_size, dspath,
-                        save_file_name):
-        arr = var_dict
-        trans_prob = np.frombuffer(arr['X']).reshape(arr['N'])
+    def __walks_per_node(self, node_idx, node_curr, node_curr_data, hin, just_memory_size, trans_prob, dspath=".",
+                        save_file_name=".", burn_in_phase=False):
         if len(list(hin.neighbors(node_curr))) == 0:
             desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
                 ((node_idx + 1) / hin.number_of_nodes()) * 100)
             print(desc, end="\r")
-            logger.info(desc)
             return
         if hin.trans_metapath_scheme:
             metapath_scheme = None
@@ -274,9 +265,17 @@ class MetaPathGraph(object):
                 desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
                     ((node_idx + 1) / hin.number_of_nodes()) * 100)
                 print(desc, end="\r")
-                logger.info(desc)
                 return
-        for curr_walk in np.arange(start=1, stop=self.num_walks + 1):
+        walk_length = self.walk_length
+        num_walks = self.num_walks + 1
+        if burn_in_phase:
+            num_walks = int(self.num_walks / 10)
+            walk_length = int(self.walk_length / 10)
+            if num_walks < 10:
+                num_walks = 10
+            if walk_length < 10:
+                walk_length = 10
+        for curr_walk in np.arange(start=1, stop=num_walks):
             X = [node_curr_data['mapped_idx']]
             prev_node = [node_curr]
             curr_node = node_curr
@@ -284,7 +283,7 @@ class MetaPathGraph(object):
             # The size of memory to hold the nodes types
             q_hist = collections.deque(maxlen=just_memory_size)
             q_hist.extend(node_curr_data['type'])
-            for curr_length in np.arange(start=1, stop=self.walk_length):
+            for curr_length in np.arange(start=1, stop=walk_length):
                 if curr_length > 1:
                     list_neigh_idx_prev_node = [hin.nodes[edge[1]]['mapped_idx'] for edge in
                                                 hin.edges(prev_node[-2])]
@@ -308,7 +307,7 @@ class MetaPathGraph(object):
                 neigh_idx_curr_node = np.array([hin.nodes[node]['mapped_idx'] for node in list_neigh_curr_node])
                 # Retrieve weights of nodes (usually set to 1.) at the start of burn in phase;
                 # otherwise, retrieve the previous transition probabilities.
-                trans_from_curr_node = trans_prob[X[-1], neigh_idx_curr_node]
+                trans_from_curr_node = trans_prob[X[-1], neigh_idx_curr_node].toarray()[0]
 
                 if hin.trans_constraint_type or hin.trans_just_type:
                     # Compute the transition probability based on types of the current node's neighbours.
@@ -381,18 +380,24 @@ class MetaPathGraph(object):
                 prev_node = prev_node + [curr_node]
                 q_hist.extend(hin.nodes[curr_node]['type'])
             # Save the generated instances into the .txt file
-            X = '\t'.join([str(v) for v in X])
-            save_data(data=X + '\n', file_name=save_file_name, save_path=dspath, mode='a', w_string=True,
-                      print_tag=False)
-            desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
-                ((node_idx + 1) / hin.number_of_nodes()) * 100)
-            print(desc, end="\r")
-            logger.info(desc)
+            if not burn_in_phase:
+                X = '\t'.join([str(v) for v in X])
+                save_data(data=X + '\n', file_name=save_file_name, save_path=dspath, mode='a', w_string=True,
+                        print_tag=False)
+                desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
+                    ((node_idx + 1) / hin.number_of_nodes()) * 100)
+                print(desc, end="\r")
+        if burn_in_phase:
+            return trans_prob
+            
+                
 
     def generate_walks(self, constraint_type, just_type, just_memory_size,
                        use_metapath_scheme, metapath_scheme='ECTCE', burn_in_phase: int = 10, hin='hin.pkl',
                        save_file_name='hin', ospath='objectset', dspath='dataset',
                        display_params: bool = True):
+        if burn_in_phase < 0:
+            burn_in_phase = 1
         self.burn_in_phase = burn_in_phase
         if use_metapath_scheme:
             if metapath_scheme.strip() != '' or metapath_scheme is not None:
@@ -429,29 +434,25 @@ class MetaPathGraph(object):
         print('\t>> Calculate initial transition probabilities...')
         logger.info('\t>> Calculate initial transition probabilities...')
         N = (hin.number_of_nodes(), hin.number_of_nodes())
-        tmp_data = np.zeros((N[0], N[0])) + EPSILON
-        tmp_data = lil_matrix(tmp_data)
+        trans_prob = np.zeros((N[0], N[0])) + EPSILON
+        trans_prob = lil_matrix(trans_prob)
         for curr_node, curr_node_data in hin.nodes(data=True):
             neigh_curr_node = np.array(
                 [hin.nodes[edge[1]]['mapped_idx'] for edge in hin.edges(curr_node)])
-            tmp_data[curr_node_data['mapped_idx'], neigh_curr_node] = 1
-        tmp_data = lil_matrix(tmp_data.multiply(1 / tmp_data.sum(1)))
+            trans_prob[curr_node_data['mapped_idx'], neigh_curr_node] = 1
+        trans_prob = lil_matrix(trans_prob.multiply(1 / trans_prob.sum(1)))
 
-        print('\t>> Generate walks...')
-        logger.info('\t>> Generate walks...')
-        tmp_nodes = RawArray('d', N[0] * N[1])
-        trans_prob = np.frombuffer(tmp_nodes).reshape(N)
-        np.copyto(trans_prob, tmp_data.toarray())
+        print('\t>> Calculate transition probabilities...')
+        logger.info('\t>> Calculate transition probabilities...')
         for burn_in_count in np.arange(start=1, stop=burn_in_phase + 1):
-            if os.path.exists(os.path.join(dspath, 'X_' + save_file_name + '.txt')):
-                os.remove(path=os.path.join(dspath, 'X_' + save_file_name + '.txt'))
-            desc = '\t\t## Burn in phase {0} (out of {1})...{2}'.format(burn_in_count, burn_in_phase, 20 * ' ')
-            print(desc)
-            logger.info(desc)
-            with Pool(processes=self.num_jobs, initializer=self._init_worker, initargs=(tmp_nodes, N)) as pool:
-                pool.starmap(self._walks_per_node, [(node_idx, node_data[0], node_data[1], hin, just_memory_size,
-                                                     dspath, 'X_' + save_file_name + '.txt')
-                                                    for node_idx, node_data in enumerate(hin.nodes(data=True))])
+            if burn_in_count > 1:
+                desc = '\t\t## Burn in phase {0} (out of {1})...{2}'.format(burn_in_count, burn_in_phase, 20 * ' ')
+                print(desc)
+                logger.info(desc)
+            for node_idx, node_data in enumerate(hin.nodes(data=True)):
+                trans_prob = self.__walks_per_node(node_idx=node_idx, node_curr=node_data[0], node_curr_data=node_data[1], 
+                                                   hin=hin, just_memory_size=just_memory_size, trans_prob=trans_prob, 
+                                                   burn_in_phase=True)
         node_prob = trans_prob.T.dot(init_node_prob)
         results = node_prob.sum()
         node_prob = node_prob.multiply(1 / results)
@@ -461,3 +462,12 @@ class MetaPathGraph(object):
             nx.set_node_attributes(hin, attrs)
         save_data(data=hin, file_name=save_file_name + '.pkl', save_path=ospath,
                   tag='heterogeneous information network', mode='wb')
+
+        print('\t>> Generate walks...')
+        logger.info('\t>> Generate walks...')
+        if os.path.exists(os.path.join(dspath, 'X_' + save_file_name + '.txt')):
+            os.remove(path=os.path.join(dspath, 'X_' + save_file_name + '.txt'))
+        parallel = Parallel(n_jobs=self.num_jobs, verbose=0)
+        parallel(delayed(self.__walks_per_node)(node_idx, node_data[0], node_data[1], hin, just_memory_size, 
+                                                trans_prob, dspath, 'X_' + save_file_name + '.txt', False)
+                               for node_idx, node_data in enumerate(hin.nodes(data=True)))
