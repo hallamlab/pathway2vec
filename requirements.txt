@@ -1,0 +1,14 @@
+json
+textwrap
+collections
+logging
+numpy
+tensorboard==1.10.0
+tensorflow==1.10.0
+gensim
+scikit-learn
+scipy
+sklearn
+networkx
+multiprocessing
+
