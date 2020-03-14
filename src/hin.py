@@ -251,7 +251,10 @@ class MetaPathGraph(object):
             desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
                 ((node_idx + 1) / hin.number_of_nodes()) * 100)
             print(desc, end="\r")
-            return
+            if burn_in_phase:
+                return trans_prob
+            else:
+                return
         if hin.trans_metapath_scheme:
             metapath_scheme = None
             if node_curr_data['type'] in hin.metapath_scheme:
@@ -260,12 +263,18 @@ class MetaPathGraph(object):
                 metapath_scheme = frequent_scheme[idx: idx + len(hin.metapath_scheme) - 1]
                 metapath_scheme = metapath_scheme * (self.walk_length // len(metapath_scheme))
             if metapath_scheme is None:
-                return
+                if burn_in_phase:
+                    return trans_prob
+                else:
+                    return
             if node_curr_data['type'] != metapath_scheme[0]:
                 desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
                     ((node_idx + 1) / hin.number_of_nodes()) * 100)
                 print(desc, end="\r")
-                return
+                if burn_in_phase:
+                    return trans_prob
+                else:
+                    return
         walk_length = self.walk_length
         num_walks = self.num_walks + 1
         if burn_in_phase:
@@ -305,10 +314,11 @@ class MetaPathGraph(object):
                 list_neigh_curr_node = np.array([node[0] for node in neigh_curr_node])
                 neigh_type_curr_node = np.array([hin.nodes[v]['type'] for v in list_neigh_curr_node])
                 neigh_idx_curr_node = np.array([hin.nodes[node]['mapped_idx'] for node in list_neigh_curr_node])
+
                 # Retrieve weights of nodes (usually set to 1.) at the start of burn in phase;
                 # otherwise, retrieve the previous transition probabilities.
                 trans_from_curr_node = trans_prob[X[-1], neigh_idx_curr_node].toarray()[0]
-
+            
                 if hin.trans_constraint_type or hin.trans_just_type:
                     # Compute the transition probability based on types of the current node's neighbours.
                     # We further smooth the transition probabilities by adding 0.001 to weights of current
