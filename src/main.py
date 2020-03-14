@@ -6,7 +6,7 @@ __version__ = "1.0"
 __maintainer__ = "Abdurrahman M. A. Basher"
 __email__ = "ar.basher@alumni.ubc.ca"
 __status__ = "Production"
-__description__ = "This file is the main entry to perform learning and prediction on dataset using pathway2vec model."
+__description__ = "This file is the main entry to perform learning and prediction on dataset using path2vec model."
 
 import datetime
 import json
@@ -93,6 +93,8 @@ def __internal_args(parse_args):
     arg.constraint_type = parse_args.constraint_type
     arg.just_type = parse_args.just_type
     arg.just_memory_size = parse_args.just_memory_size
+    arg.burn_in_input_size = parse_args.burn_in_input_size
+    arg.burn_in_phase = parse_args.burn_in_phase
     arg.walk_length = parse_args.walk_length
     arg.num_walks = parse_args.num_walks
     arg.q = parse_args.q
@@ -104,21 +106,12 @@ def __internal_args(parse_args):
     arg.third_graph_is_connected = parse_args.third_graph_not_connected
     arg.remove_isolates = parse_args.remove_isolates
     arg.weighted_within_layers = parse_args.weighted_within_layers
-    arg.burn_in_phase = parse_args.burn_in_phase
 
     ##########################################################################################################
     ##########                              ARGUMENTS USED FOR TRAINING                             ##########
     ##########################################################################################################
 
     arg.train = parse_args.train
-    arg.evaluate = parse_args.evaluate
-    arg.predict = parse_args.predict
-    if parse_args.predict or parse_args.evaluate:
-        if not parse_args.train:
-            if os.path.exists(os.path.join(fph.MODEL_PATH, parse_args.trained_model)):
-                arg.trained_model = parse_args.trained_model
-            else:
-                raise FileNotFoundError('Please provide a valid path to the already trained train')
     arg.use_truncated_normal_weight = parse_args.use_truncated_normal_weight
     arg.use_truncated_normal_emb = parse_args.use_truncated_normal_emb
     arg.window_size = parse_args.window_size
@@ -126,8 +119,6 @@ def __internal_args(parse_args):
     arg.embedding_dim = parse_args.embedding_dim
     arg.negative_samples = parse_args.negative_samples
     arg.learning_rate = parse_args.lr
-    arg.estimate_prob = parse_args.estimate_prob
-    arg.top_k = parse_args.top_k
     arg.subsample_size = parse_args.subsample_size
     arg.max_keep_model = parse_args.max_keep_model
     arg.fit_by_word2vec = parse_args.fit_by_word2vec
@@ -214,8 +205,12 @@ def parse_command_line():
                         help='Apply jump and stay strategy in random walk. (default value: False).')
     parser.add_argument('--just-memory-size', type=int, default=5,
                         help='The memory size of Q-hist. (default value: 5).')
-    parser.add_argument('--walk-length', type=int, default=100, help='Length of walk per source. (default value: 100).')
+    parser.add_argument('--burn-in-phase', type=int, default=1,
+                        help='Burn in phase time. -1 implies no burn in phase. (default value: 1).')
+    parser.add_argument('--burn-in-input-size', default=0.5, type=float,
+                        help='Subsampling size of the number of walks and length for burn in phase. (default value: 0.7)')
     parser.add_argument('--num-walks', type=int, default=100, help='Number of walks per source. (default value: 100).')
+    parser.add_argument('--walk-length', type=int, default=100, help='Length of walk per source. (default value: 100).')
     parser.add_argument('--q', type=float, default=0.5,
                         help='Explore hyperparameter ([0-1]) denoting the probability of exploring nodes '
                              'at one layer of multi graphs. (default value: 0.5).')
@@ -235,16 +230,10 @@ def parse_command_line():
                         help='Whether the combined multi graphs does not contain isolated nodes. (default value: True).')
     parser.add_argument('--weighted-within-layers', action='store_true', default=False,
                         help='Boolean specifying (un)weighted. (default value: unweighted).')
-    parser.add_argument('--burn-in-phase', type=int, default=1,
-                        help='Burn in phase time. -1 implies no burn in phase. (default value: 1).')
-
-    # Arguments for training and evaluation
+    
+    # Arguments for training
     parser.add_argument('--train', action='store_true', default=False,
                         help='Whether to train the path2vec model. (default value: False).')
-    parser.add_argument('--evaluate', action='store_true', default=False,
-                        help='Whether to evaluate path2vec\'s performances. (default value: False).')
-    parser.add_argument('--predict', action='store_true', default=False,
-                        help='Whether to predict sets of pathways from inputs using path2vec. (default value: False).')
     parser.add_argument('--fit-by-word2vec', action='store_true', default=False,
                         help='Whether to train the path2vec using word2vec. (default value: False).')
     parser.add_argument('--use-truncated-normal-weight', action='store_false', default=True,
@@ -259,11 +248,6 @@ def parse_command_line():
     parser.add_argument('--negative-samples', default=5, type=int,
                         help='Number of negative samples. (default value: 5).')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate. (default value: 0.01).')
-    parser.add_argument('--estimate-prob', action='store_true', default=False,
-                        help='Whether to return prediction of nodes as probability '
-                             'estimate or not. (default value: False).')
-    parser.add_argument('--top-k', type=int, default=100,
-                        help='Top k nodes for recommending pathways. (default value: 100).')
     parser.add_argument('--subsample-size', type=int, default=10, help='Subsampling the center nodes. '
                                                                        '-1 implies no subsampling is applied. (default value: 10).')
     parser.add_argument('--max-keep-model', default=100, type=int,

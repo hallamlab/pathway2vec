@@ -79,7 +79,8 @@ def __train(arg):
                               display_interval=arg.display_interval)
         model.generate_walks(constraint_type=arg.constraint_type, just_type=arg.just_type,
                              just_memory_size=arg.just_memory_size, use_metapath_scheme=arg.use_metapath_scheme,
-                             metapath_scheme=arg.metapath_scheme, burn_in_phase=arg.burn_in_phase, hin=hin,
+                             metapath_scheme=arg.metapath_scheme, burn_in_phase=arg.burn_in_phase, 
+                             burn_in_input_size=arg.burn_in_input_size, hin=hin,
                              save_file_name=arg.file_name, ospath=arg.ospath, dspath=arg.dspath,
                              display_params=display_params)
 
@@ -117,14 +118,12 @@ def __train(arg):
 
 def train(arg):
     try:
-        if arg.preprocess_dataset or arg.extract_instance or arg.train or arg.predict_nodes:
+        if arg.preprocess_dataset or arg.extract_instance or arg.train:
             actions = list()
             if arg.preprocess_dataset:
                 actions += ['PREPROCESS BIOCYC GRAPHS']
             if arg.extract_instance:
                 actions += ['GENERATE RANDOM WALKS']
-            if arg.train or arg.predict:
-                actions += ['TRAIN PATHWAY2VEC']
             desc = [str(item[0] + 1) + '. ' + item[1] for item in zip(list(range(len(actions))), actions)]
             desc = ' '.join(desc)
             print('\n*** APPLIED ACTIONS ARE: {0}'.format(desc))

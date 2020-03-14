@@ -12,6 +12,7 @@ import sys
 import time
 import warnings
 from sklearn.utils._joblib import Parallel, delayed
+from multiprocessing import Pool
 from scipy.sparse import lil_matrix
 from utility.access_file import save_data
 
@@ -25,8 +26,8 @@ class MetaPathGraph(object):
                  second_graph_is_directed: bool = False, second_graph_is_connected: bool = True,
                  third_graph_is_directed: bool = False, third_graph_is_connected: bool = True,
                  weighted_within_layers: bool = False, remove_isolates: bool = True, q: float = 1.0,
-                 num_walks: int = 1000, walk_length: int = 100, learning_rate: float = 0.001, num_jobs: int = 1,
-                 display_interval: int = 50, log_path='../../log'):
+                 num_walks: int = 100, walk_length: int = 100, learning_rate: float = 0.001, 
+                 num_jobs: int = 1, display_interval: int = 50, log_path='../../log'):
         logging.basicConfig(filename=os.path.join(log_path, 'MetaPathGraph_Events'), level=logging.DEBUG)
         self.first_graph_is_directed = first_graph_is_directed
         self.first_graph_is_connected = first_graph_is_connected
@@ -72,7 +73,6 @@ class MetaPathGraph(object):
         argdict.update({'learning_rate': 'The learning rate: {0}'.format(self.learning_rate)})
         argdict.update({'num_walks': 'Number of walks per source node: {0}'.format(self.num_walks)})
         argdict.update({'walk_length': 'Length of walk per source node: {0}'.format(self.walk_length)})
-        argdict.update({'burn_in_phase': 'Burn in phase count: {0}'.format(self.burn_in_phase)})
         argdict.update({'num_jobs': 'Number of parallel workers: {0}'.format(self.num_jobs)})
         argdict.update({'display_interval': 'Display Interval: {0}'.format(self.display_interval)})
         for key, value in kwargs.items():
@@ -278,11 +278,11 @@ class MetaPathGraph(object):
         walk_length = self.walk_length
         num_walks = self.num_walks + 1
         if burn_in_phase:
-            num_walks = int(self.num_walks / 10)
-            walk_length = int(self.walk_length / 10)
-            if num_walks < 10:
+            num_walks = int(self.num_walks * self.burn_in_input_size)
+            walk_length = int(self.walk_length * self.burn_in_input_size)
+            if num_walks < 0:
                 num_walks = 10
-            if walk_length < 10:
+            if walk_length < 0:
                 walk_length = 10
         for curr_walk in np.arange(start=1, stop=num_walks):
             X = [node_curr_data['mapped_idx']]
@@ -403,12 +403,16 @@ class MetaPathGraph(object):
                 
 
     def generate_walks(self, constraint_type, just_type, just_memory_size,
-                       use_metapath_scheme, metapath_scheme='ECTCE', burn_in_phase: int = 10, hin='hin.pkl',
-                       save_file_name='hin', ospath='objectset', dspath='dataset',
-                       display_params: bool = True):
+                       use_metapath_scheme, metapath_scheme='ECTCE', burn_in_phase: int = 10,
+                       burn_in_input_size: float = 0.5,
+                       hin='hin.pkl', save_file_name='hin', ospath='objectset', 
+                       dspath='dataset', display_params: bool = True):
         if burn_in_phase < 0:
             burn_in_phase = 1
         self.burn_in_phase = burn_in_phase
+        if burn_in_input_size < 0 or burn_in_input_size > 1:
+            burn_in_input_size = 0.1
+        self.burn_in_input_size = burn_in_input_size
         if use_metapath_scheme:
             if metapath_scheme.strip() != '' or metapath_scheme is not None:
                 self.__check_metapath_validity(metapath_scheme=metapath_scheme)
@@ -422,13 +426,14 @@ class MetaPathGraph(object):
             metapath_scheme = None
 
         if display_params:
-            self.__print_arguments(
-                use_metapath_scheme='Use a metapath scheme: {0}'.format(use_metapath_scheme),
-                metapath_scheme='The specified metapath scheme: {0}'.format(metapath_scheme),
-                constraint_type='Use node type: {0}'.format(constraint_type),
-                just_type='Use JUST algorithm: {0}'.format(just_type))
+            self.__print_arguments(use_metapath_scheme='Use a metapath scheme: {0}'.format(use_metapath_scheme),
+                                   metapath_scheme='The specified metapath scheme: {0}'.format(metapath_scheme),
+                                   constraint_type='Use node type: {0}'.format(constraint_type),
+                                   just_type='Use JUST algorithm: {0}'.format(just_type),
+                                   burn_in_phase='Burn in phase count: {0}'.format(self.burn_in_phase),
+                                   burn_in_input_size = 'Subsampling size of the number of walks and length for burn in phase: {0}'.format(self.burn_in_input_size))
             time.sleep(2)
-
+            
         init_node_prob, type2index, type2prob = self.__init_probability(hin)
         hin.type2index = type2index
         hin.type2prob = type2prob
@@ -460,8 +465,9 @@ class MetaPathGraph(object):
                 print(desc)
                 logger.info(desc)
             for node_idx, node_data in enumerate(hin.nodes(data=True)):
-                trans_prob = self.__walks_per_node(node_idx=node_idx, node_curr=node_data[0], node_curr_data=node_data[1], 
-                                                   hin=hin, just_memory_size=just_memory_size, trans_prob=trans_prob, 
+                trans_prob = self.__walks_per_node(node_idx=node_idx, node_curr=node_data[0],
+                                                   node_curr_data=node_data[1], hin=hin, just_memory_size=just_memory_size, 
+                                                   trans_prob=trans_prob, 
                                                    burn_in_phase=True)
         node_prob = trans_prob.T.dot(init_node_prob)
         results = node_prob.sum()
@@ -477,7 +483,12 @@ class MetaPathGraph(object):
         logger.info('\t>> Generate walks...')
         if os.path.exists(os.path.join(dspath, 'X_' + save_file_name + '.txt')):
             os.remove(path=os.path.join(dspath, 'X_' + save_file_name + '.txt'))
-        parallel = Parallel(n_jobs=self.num_jobs, verbose=0)
-        parallel(delayed(self.__walks_per_node)(node_idx, node_data[0], node_data[1], hin, just_memory_size, 
-                                                trans_prob, dspath, 'X_' + save_file_name + '.txt', False)
-                               for node_idx, node_data in enumerate(hin.nodes(data=True)))
+        #parallel = Parallel(n_jobs=self.num_jobs, verbose=0)
+        #parallel(delayed(self.__walks_per_node)(node_idx, node_data[0], node_data[1], hin, just_memory_size, 
+                                                #trans_prob, dspath, 'X_' + save_file_name + '.txt', False)
+                               #for node_idx, node_data in enumerate(hin.nodes(data=True)))
+        pool = Pool(processes=self.num_jobs)
+        results = [pool.apply_async(self._walks_per_node, args=(node_idx, node_data[0], node_data[1], 
+                                                                hin, just_memory_size, trans_prob, dspath, 'X_' + save_file_name + '.txt', False))
+                    for node_idx, node_data in enumerate(hin.nodes(data=True))]
+        output = [p.get() for p in results]
