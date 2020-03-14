@@ -11,7 +11,6 @@ import os
 import sys
 import time
 import warnings
-from sklearn.utils._joblib import Parallel, delayed
 from multiprocessing import Pool
 from scipy.sparse import lil_matrix
 from utility.access_file import save_data
@@ -245,7 +244,7 @@ class MetaPathGraph(object):
         init_node_prob = init_node_prob.multiply(1 / tmp)
         return init_node_prob, type2index, type2prob
 
-    def __walks_per_node(self, node_idx, node_curr, node_curr_data, hin, just_memory_size, trans_prob, dspath=".",
+    def _walks_per_node(self, node_idx, node_curr, node_curr_data, hin, just_memory_size, trans_prob, dspath=".",
                         save_file_name=".", burn_in_phase=False):
         if len(list(hin.neighbors(node_curr))) == 0:
             desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
@@ -465,7 +464,7 @@ class MetaPathGraph(object):
                 print(desc)
                 logger.info(desc)
             for node_idx, node_data in enumerate(hin.nodes(data=True)):
-                trans_prob = self.__walks_per_node(node_idx=node_idx, node_curr=node_data[0],
+                trans_prob = self._walks_per_node(node_idx=node_idx, node_curr=node_data[0],
                                                    node_curr_data=node_data[1], hin=hin, just_memory_size=just_memory_size, 
                                                    trans_prob=trans_prob, 
                                                    burn_in_phase=True)
@@ -483,10 +482,6 @@ class MetaPathGraph(object):
         logger.info('\t>> Generate walks...')
         if os.path.exists(os.path.join(dspath, 'X_' + save_file_name + '.txt')):
             os.remove(path=os.path.join(dspath, 'X_' + save_file_name + '.txt'))
-        #parallel = Parallel(n_jobs=self.num_jobs, verbose=0)
-        #parallel(delayed(self.__walks_per_node)(node_idx, node_data[0], node_data[1], hin, just_memory_size, 
-                                                #trans_prob, dspath, 'X_' + save_file_name + '.txt', False)
-                               #for node_idx, node_data in enumerate(hin.nodes(data=True)))
         pool = Pool(processes=self.num_jobs)
         results = [pool.apply_async(self._walks_per_node, args=(node_idx, node_data[0], node_data[1], 
                                                                 hin, just_memory_size, trans_prob, dspath, 'X_' + save_file_name + '.txt', False))
