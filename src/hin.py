@@ -355,7 +355,7 @@ class MetaPathGraph(object):
 
                     # Retrieve weights of nodes (usually set to 1.) at the start of burn in phase;
                     # otherwise, retrieve the previous transition probabilities.
-                    trans_from_curr_node = trans_prob[X[-1], neigh_idx_curr_node][0]
+                    trans_from_curr_node = trans_prob[X[-1], neigh_idx_curr_node].toarray()[0]
                     list_neigh_curr_node = np.array([node[0] for node in list_neigh_curr_node])
 
                 # Compute the transition probability of the current node's neighbours based on the chosen type.
