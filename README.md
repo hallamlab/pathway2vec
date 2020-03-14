@@ -101,8 +101,8 @@ To learn embeddings using the same above parameter settings but with *metapath2v
 where *--file-name* corresponds to the *.txt* generate walks, *--model-name* corresponds the name of the models, excluding any *EXTENSION*. The model name will have *.npz* extension, *--constraint-type* enables the normalized skip gram model, and *fit-by-word2vec* enables to train using gensim package.
 
 ## Citing
-If you employ _pathway2vec_ in your research, please consider citing the following paper presented at bioRxiv 2020:
-- M. A. Basher, Abdur Rahman, and Hallam, Steven J.. **["Leveraging Heterogeneous Network Embedding for Metabolic Pathway Prediction"](https://www.biorxiv.org/content/10.1101/2020.02.20.940205v2.abstract)**, Proceedings of bioRxiv (2020).
+If you employ _pathway2vec_ in your research, please consider citing the following paper:
+- M. A. Basher, Abdur Rahman, and Hallam, Steven J.. **["Leveraging Heterogeneous Network Embedding for Metabolic Pathway Prediction"](https://www.biorxiv.org/content/10.1101/2020.02.20.940205v2.abstract)**, bioRxiv (2020).
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
