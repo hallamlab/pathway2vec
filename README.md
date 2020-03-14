@@ -51,34 +51,31 @@ To preprocess **two layers graph**, execute the following command:
 where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--exclude-third-graph* enables the including two layers only.
 
 ### Generate Walks
-To generate walks, we provide few examples:
+To generate walks, we provide few examples. The common arguments is all examples are: *--burn-in-phase* is the burn in phase time to compute transition probability prior to generating walks, *--burn-in-input-size* is subsampling size of the number of walks and length for burn in phase. These two arguments are set by defualt to 1 and 0.5. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node. *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. 
+
 #### Example 1
 To generate *node2vec* random walks, execute the following command:
 
-``python main.py --extract-instance --q 0.5 --walk-length 10 --num-walks 5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --q 0.5 --walk-length 10 --num-walks 5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
 
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents in-out parameter that allows the search to differentiate between "inward" and "outward" nodes. The return parameter that controls the likelihood of immediately revisiting a node in the walk will be automatically adjusted.  The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
+where *--q* represents in-out parameter that allows the search to differentiate between "inward" and "outward" nodes. The return parameter that controls the likelihood of immediately revisiting a node in the walk will be automatically adjusted.
 
 #### Example 2
 To generate *metapath2vec* random walks, execute the following command:
 
-``python main.py --extract-instance --walk-length 10 --num-walks 5 --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
-
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
+``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --walk-length 10 --num-walks 5 --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
 
 #### Example 3
 To generate *JUST* random walks, execute the following command:
 
-``python main.py --extract-instance --q 0.5 --walk-length 10 --num-walks 5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
     
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
-
 #### Example 4
 To generate *RUST* random walks, execute the following command with :
 
-``python main.py --extract-instance --burn-in-phase 3 --q 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
+``python main.py --extract-instance --burn-in-phase 3 --burn-in-input-size 0.3 --q 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 10``
 
-where *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node.
+For RUST, it is better to use *--burn-in-phase = 3*. *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation.
 
 ### Train
 To learn embeddings using the random walks, we provide few examples:
