@@ -12,46 +12,58 @@ This repo contains an implementation of *pathway2vec*, a software package consis
 - [pandas](http://pandas.pydata.org/) (>= 0.23)
 - [NetworkX](https://networkx.github.io/) (>= 2.2)
 - [gensim](https://radimrehurek.com/gensim/) (== 3.7)
-- [scipy](https://www.scipy.org/index.html)
+- [scipy](https://www.scipy.org/index.html) (==1.2)
 
 ## Objects
-- Please download the files: "ec_graph.pkl", "compound_graph.pkl", "pathway_graph.pkl", "ec2compound.pkl", "compound2pathway.pkl", and "ec2pathway.pkl" from: [HallamLab](https://github.com/hallamlab)
-- You need to generate a heterogeneous information network in order to learn embeddings. A preprocessed hin file can be obtained for the experimental purposes from [hin.pkl](https://github.com/hallamlab).
-
+- Please download the following preprocessed files from [Zenodo](https://zenodo.org/record/3711103#.Xm1lEHVKjeQ). The link contains:
+    - "ec_graph.pkl": the EC graph, which is a set of ECs with interactions.
+    - "compound_graph.pkl": the compound graph, which is a set of compounds with interactions.
+    - "pathway_graph.pkl": the pathway graph, which is a set of pathways with interactions.
+    - "ec2compound.pkl": mapping file from the EC layer onto the compound layer.
+    - "compound2pathway.pkl": mapping file from the compound layer onto the pathway layer.
+    - "ec2pathway.pkl": mapping file from the EC layer onto the pathway layer.
+    - "hin.pkl": a sample of heterogeneous information network, which is used to generate walks. Based on your tests, you need to generate a heterogeneous information network during preprocessing step. You many use "hin.pkl" to peek into the structure.
+    - "X_hin.txt": a sample of generated walks, which is used to learn embeddings. Each line encode a walk rooted at a node beginning of the line. Based on your tests, you need to generate walks during random walks step. You many use "hin.pkl" as a test sample.
+    - "pathway2vec_embeddings.npz": a sample of embeddings (nodes x dimension size). Based on your tests, you need to learn embeddings walks during training step. You many use "hin.pkl" and "X_hin.txt" as test samples.
+    
 ## Basic Usage
 To display *pathway2vec*'s running options, use: `python main.py --help`. It should be self-contained. 
+
 ### Preprocessing graph
-To preprocess graphs, we provide few examples:
+To preprocess graphs, we provide few examples. For all examples: *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
+
+**Please** do not use the sample "hin.pkl" during this step, and change the name of the generated hin file or store the provided "hin.pkl" in a different folder to avoid conflict.
+
 #### Example 1
 To preprocess three layer graph **all connected**, execute the following command:
 
 ``python main.py --preprocess-dataset --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
-
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
 
 #### Example 2
 To preprocess three layer graph **excluding the connection of the first graph**, execute the following command:
 
 ``python main.py --preprocess-dataset --first-graph-not-connected --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
 
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--first-graph-not-connected* enables exclusion of connection among the nodes in the first layer.
+where *--first-graph-not-connected* enables exclusion of connection among the nodes in the first layer.
 
 #### Example 3
 To preprocess three layer graph while **removing isolates**, execute the following command:
 
 ``python main.py --preprocess-dataset --remove-isolates --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
 
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--remove-isolates* enables the isolation of nodes less than 2 connectivity.
+where *--remove-isolates* enables the isolation of nodes less than 2 connectivity.
 
 #### Example 4
 To preprocess **two layers graph**, execute the following command:
 
 ``python main.py --preprocess-dataset --exclude-third-graph --first-graph-name "ec_graph.pkl" --second-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
 
-where *--hin-file* corresponds to the desired generated file name, ending with *.pkl*. The argument *--exclude-third-graph* enables the including two layers only.
+where *--exclude-third-graph* enables the including two layers only.
 
 ### Generate Walks
-To generate walks, we provide few examples. The common arguments is all examples are: *--burn-in-phase* is the burn in phase time to compute transition probability prior to generating walks, *--burn-in-input-size* is subsampling size of the number of walks and length for burn in phase. These two arguments are set by defualt to 1 and 0.5. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node. *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. 
+To generate walks, we provide few examples. Description about arguments in all examples: *--burn-in-phase* is the burn in phase time to compute transition probability prior to generating walks, *--burn-in-input-size* is subsampling size of the number of walks and length for burn in phase. These two arguments are set by defualt to 1 and 0.5. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node. *--file-name* corresponds to the desired file name, excluding any *EXTENSION* (e.g. "X_hin"). The file will have *.txt* extension. 
+
+**Please** do not use the sample "X_hin.txt" during this step, and change the name of the generated walks or store the provided "X_hin.txt" in a different folder to avoid conflict.
 
 #### Example 1
 To generate *node2vec* random walks, execute the following command:
@@ -78,7 +90,11 @@ To generate *RUST* random walks, execute the following command with :
 For RUST, it is better to use *--burn-in-phase = 3*. *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation.
 
 ### Train
-To learn embeddings using the random walks, we provide few examples:
+To learn embeddings using the random walks, we provide few examples.
+
+**Please** do not use the sample "pathway2vec_embeddings.npz" during this step, and change the name of the embeddings file or store the provided "pathway2vec_embeddings.npz" in a different folder to avoid conflict.
+
+
 #### Example 1
 To learn embeddings using dimension size *--embedding-dim* 128, context size *--window-size* 3, Number of samples to be considered within defined context size *--num-skips* 2, execute the following command:
 
@@ -101,7 +117,7 @@ To learn embeddings using the same above parameter settings but with *metapath2v
 where *--file-name* corresponds to the *.txt* generate walks, *--model-name* corresponds the name of the models, excluding any *EXTENSION*. The model name will have *.npz* extension, *--constraint-type* enables the normalized skip gram model, and *fit-by-word2vec* enables to train using gensim package.
 
 ## Citing
-If you employ _pathway2vec_ in your research, please consider citing the following paper:
+If you find _pathway2vec_ useful in your research, please consider citing the following paper:
 - M. A. Basher, Abdur Rahman, and Hallam, Steven J.. **["Leveraging Heterogeneous Network Embedding for Metabolic Pathway Prediction"](https://www.biorxiv.org/content/10.1101/2020.02.20.940205v2.abstract)**, bioRxiv (2020).
 
 ## Contact
