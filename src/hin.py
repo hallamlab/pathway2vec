@@ -448,8 +448,8 @@ class MetaPathGraph(object):
         print('\t>> Calculate initial transition probabilities...')
         logger.info('\t>> Calculate initial transition probabilities...')
         N = (hin.number_of_nodes(), hin.number_of_nodes())
-        trans_prob = np.zeros((N[0], N[0])) + EPSILON
-        trans_prob = lil_matrix(trans_prob)
+        trans_prob = lil_matrix((N[0], N[0]))
+        trans_prob.data[:] = EPSILON
         for curr_node, curr_node_data in hin.nodes(data=True):
             neigh_curr_node = np.array(
                 [hin.nodes[edge[1]]['mapped_idx'] for edge in hin.edges(curr_node)])
