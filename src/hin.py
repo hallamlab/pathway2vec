@@ -451,17 +451,15 @@ class MetaPathGraph(object):
         trans_prob = lil_matrix((N[0], N[0]))
         for curr_node, curr_node_data in hin.nodes(data=True):
             neigh_curr_node = np.array(
-                [hin.nodes[edge[1]]['mapped_idx'] for edge in hin.edges(curr_node)])
+                [hin.nodes[edge[1]]['mapped_idx'] for edge in hin.edges(curr_node)], dtype=np.int)
             trans_prob[curr_node_data['mapped_idx'], neigh_curr_node] = 1
         trans_prob = lil_matrix(trans_prob.multiply(1 / trans_prob.sum(1)))
 
         print('\t>> Calculate transition probabilities...')
         logger.info('\t>> Calculate transition probabilities...')
         for burn_in_count in np.arange(start=1, stop=burn_in_phase + 1):
-            if burn_in_count > 1:
-                desc = '\t\t## Burn in phase {0} (out of {1})...{2}'.format(burn_in_count, burn_in_phase, 20 * ' ')
-                print(desc)
-                logger.info(desc)
+            desc = '\t\t## Burn in phase {0} (out of {1})...{2}'.format(burn_in_count, burn_in_phase, 20 * ' ')
+            print(desc)
             for node_idx, node_data in enumerate(hin.nodes(data=True)):
                 trans_prob = self._walks_per_node(node_idx=node_idx, node_curr=node_data[0],
                                                    node_curr_data=node_data[1], hin=hin, just_memory_size=just_memory_size, 
@@ -479,10 +477,14 @@ class MetaPathGraph(object):
 
         print('\t>> Generate walks...')
         logger.info('\t>> Generate walks...')
-        if os.path.exists(os.path.join(dspath, 'X_' + save_file_name + '.txt')):
-            os.remove(path=os.path.join(dspath, 'X_' + save_file_name + '.txt'))
+        save_file_name = 'X_' + save_file_name + '.txt'
+        if os.path.exists(os.path.join(dspath, save_file_name)):
+            os.remove(path=os.path.join(dspath, save_file_name))
         pool = Pool(processes=self.num_jobs)
         results = [pool.apply_async(self._walks_per_node, args=(node_idx, node_data[0], node_data[1], 
-                                                                hin, just_memory_size, trans_prob, dspath, 'X_' + save_file_name + '.txt', False))
+                                                                hin, just_memory_size, trans_prob, dspath, 
+                                                                save_file_name, False))
                     for node_idx, node_data in enumerate(hin.nodes(data=True))]
         output = [p.get() for p in results]
+        desc = '\t\t## Stored generated walks to: {0}'.format(save_file_name)
+        print(desc)

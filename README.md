@@ -61,7 +61,7 @@ To preprocess **two layers graph**, execute the following command:
 where *--exclude-third-graph* enables the including two layers only.
 
 ### Generate Walks
-To generate walks, we provide few examples. Description about arguments in all examples: *--burn-in-phase* is the burn in phase time to compute transition probability prior to generating walks, *--burn-in-input-size* is subsampling size of the number of walks and length for burn in phase. These two arguments are set by defualt to 1 and 0.5. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node. *--file-name* corresponds to the desired file name, excluding any *EXTENSION* (e.g. "X_hin"). The file will have *.txt* extension. 
+To generate walks, we provide few examples. Description about arguments in all examples: *--burn-in-phase* is the burn in phase time to compute transition probability prior to generating walks, *--burn-in-input-size* is subsampling size of the number of walks and length for burn in phase. These two arguments are set by defualt to 1 and 0.5. The arguments *--walk-length* corresponds length of walk per source while *--num-walks* is number of generated walks per source node. *--file-name* corresponds to the desired graph file name and generated walks, excluding any *EXTENSION* (e.g. "hin"). Two files will be resulted one will have *.txt* suffix and *X_* prefix while the graph whill have *.pkl* extension. 
 
 **Please** do not use the sample "X_hin.txt" during this step, and change the name of the generated walks or store the provided "X_hin.txt" in a different folder to avoid conflict.
 
@@ -98,7 +98,7 @@ To learn embeddings using the random walks, we provide few examples.
 #### Example 1
 To learn embeddings using dimension size *--embedding-dim* 128, context size *--window-size* 3, Number of samples to be considered within defined context size *--num-skips* 2, execute the following command:
 
-``python main.py --train --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath "[Location for storing costs]" --logpath "[Location to the log directory]" --num-epochs 1 --num-jobs 10``
+``python main.py --train --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the generated hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath "[Location for storing costs]" --logpath "[Location to the log directory]" --num-epochs 1 --num-jobs 10``
 
 where *--file-name* corresponds to the *.txt* generate walks and *--model-name* corresponds the name of the models (excluding any *EXTENSION*). The model name will have *.npz* extension. 
 
