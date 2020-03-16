@@ -3,8 +3,8 @@ textwrap
 collections
 logging
 numpy
-tensorboard==1.10.0
-tensorflow==1.10.0
+tensorboard
+tensorflow
 gensim
 scikit-learn
 scipy
