@@ -34,10 +34,10 @@ Please download the following preprocessed files from [Zenodo](https://zenodo.or
 
 ## Installation and Basic Usage
 Run the following commands to clone the repository to an approriate location:
+
 ``git clone https://github.com/hallamlab/pathway2vec.git``
 
 For all experiments, navigate to ``src`` folder then run the commands of your choice. For example, to display *pathway2vec*'s running options use: `python main.py --help`. It should be self-contained. 
-
 
 ### Preprocessing graph
 To preprocess graphs, we provide few examples. For all examples: *--hin-file* corresponds to the desired generated file name, ending with *.pkl*.
