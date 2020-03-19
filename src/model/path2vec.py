@@ -4,15 +4,15 @@ This file is used to train the input dataset.
 
 import collections
 import logging
-import numpy as np
 import os
 import sys
-import tensorflow as tf
 import time
 import warnings
+
+import numpy as np
+import tensorflow as tf
 from gensim.models import word2vec
 from model.emb import Embedding
-from sklearn.metrics.ranking import auc
 from tensorflow.contrib.tensorboard.plugins import projector
 from utility.access_file import save_data
 

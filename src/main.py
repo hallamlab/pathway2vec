@@ -12,8 +12,9 @@ import datetime
 import json
 import os
 import textwrap
-import utility.file_path as fph
 from argparse import ArgumentParser
+
+import utility.file_path as fph
 from train import train
 from utility.arguments import Arguments
 
@@ -230,7 +231,7 @@ def parse_command_line():
                         help='Whether the combined multi graphs does not contain isolated nodes. (default value: True).')
     parser.add_argument('--weighted-within-layers', action='store_true', default=False,
                         help='Boolean specifying (un)weighted. (default value: unweighted).')
-    
+
     # Arguments for training
     parser.add_argument('--train', action='store_true', default=False,
                         help='Whether to train the path2vec model. (default value: False).')

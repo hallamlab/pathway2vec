@@ -5,13 +5,14 @@ represented as graphs and to generate random walks.
 
 import collections
 import logging
-import networkx as nx
-import numpy as np
 import os
 import sys
 import time
 import warnings
 from multiprocessing import Pool
+
+import networkx as nx
+import numpy as np
 from scipy.sparse import lil_matrix
 from utility.access_file import save_data
 
@@ -25,7 +26,7 @@ class MetaPathGraph(object):
                  second_graph_is_directed: bool = False, second_graph_is_connected: bool = True,
                  third_graph_is_directed: bool = False, third_graph_is_connected: bool = True,
                  weighted_within_layers: bool = False, remove_isolates: bool = True, q: float = 1.0,
-                 num_walks: int = 100, walk_length: int = 100, learning_rate: float = 0.001, 
+                 num_walks: int = 100, walk_length: int = 100, learning_rate: float = 0.001,
                  num_jobs: int = 1, display_interval: int = 50, log_path='../../log'):
         logging.basicConfig(filename=os.path.join(log_path, 'MetaPathGraph_Events'), level=logging.DEBUG)
         self.first_graph_is_directed = first_graph_is_directed
@@ -317,7 +318,7 @@ class MetaPathGraph(object):
                 # Retrieve weights of nodes (usually set to 1.) at the start of burn in phase;
                 # otherwise, retrieve the previous transition probabilities.
                 trans_from_curr_node = trans_prob[X[-1], neigh_idx_curr_node].toarray()[0]
-            
+
                 if hin.trans_constraint_type or hin.trans_just_type:
                     # Compute the transition probability based on types of the current node's neighbours.
                     # We further smooth the transition probabilities by adding 0.001 to weights of current
@@ -392,19 +393,17 @@ class MetaPathGraph(object):
             if not burn_in_phase:
                 X = '\t'.join([str(v) for v in X])
                 save_data(data=X + '\n', file_name=save_file_name, save_path=dspath, mode='a', w_string=True,
-                        print_tag=False)
+                          print_tag=False)
                 desc = '\t\t\t--> Extracted walks for {0:.4f}% of nodes...'.format(
                     ((node_idx + 1) / hin.number_of_nodes()) * 100)
                 print(desc, end="\r")
         if burn_in_phase:
             return trans_prob
-            
-                
 
     def generate_walks(self, constraint_type, just_type, just_memory_size,
                        use_metapath_scheme, metapath_scheme='ECTCE', burn_in_phase: int = 10,
                        burn_in_input_size: float = 0.5,
-                       hin='hin.pkl', save_file_name='hin', ospath='objectset', 
+                       hin='hin.pkl', save_file_name='hin', ospath='objectset',
                        dspath='dataset', display_params: bool = True):
         if burn_in_phase < 0:
             burn_in_phase = 1
@@ -430,9 +429,10 @@ class MetaPathGraph(object):
                                    constraint_type='Use node type: {0}'.format(constraint_type),
                                    just_type='Use JUST algorithm: {0}'.format(just_type),
                                    burn_in_phase='Burn in phase count: {0}'.format(self.burn_in_phase),
-                                   burn_in_input_size = 'Subsampling size of the number of walks and length for burn in phase: {0}'.format(self.burn_in_input_size))
+                                   burn_in_input_size='Subsampling size of the number of walks and length for burn in phase: {0}'.format(
+                                       self.burn_in_input_size))
             time.sleep(2)
-            
+
         init_node_prob, type2index, type2prob = self.__init_probability(hin)
         hin.type2index = type2index
         hin.type2prob = type2prob
@@ -462,9 +462,10 @@ class MetaPathGraph(object):
             print(desc)
             for node_idx, node_data in enumerate(hin.nodes(data=True)):
                 trans_prob = self._walks_per_node(node_idx=node_idx, node_curr=node_data[0],
-                                                   node_curr_data=node_data[1], hin=hin, just_memory_size=just_memory_size, 
-                                                   trans_prob=trans_prob, 
-                                                   burn_in_phase=True)
+                                                  node_curr_data=node_data[1], hin=hin,
+                                                  just_memory_size=just_memory_size,
+                                                  trans_prob=trans_prob,
+                                                  burn_in_phase=True)
         node_prob = trans_prob.T.dot(init_node_prob)
         results = node_prob.sum()
         node_prob = node_prob.multiply(1 / results)
@@ -481,10 +482,10 @@ class MetaPathGraph(object):
         if os.path.exists(os.path.join(dspath, save_file_name)):
             os.remove(path=os.path.join(dspath, save_file_name))
         pool = Pool(processes=self.num_jobs)
-        results = [pool.apply_async(self._walks_per_node, args=(node_idx, node_data[0], node_data[1], 
-                                                                hin, just_memory_size, trans_prob, dspath, 
+        results = [pool.apply_async(self._walks_per_node, args=(node_idx, node_data[0], node_data[1],
+                                                                hin, just_memory_size, trans_prob, dspath,
                                                                 save_file_name, False))
-                    for node_idx, node_data in enumerate(hin.nodes(data=True))]
+                   for node_idx, node_data in enumerate(hin.nodes(data=True))]
         output = [p.get() for p in results]
         desc = '\t\t## Stored generated walks to: {0}'.format(save_file_name)
         print(desc)

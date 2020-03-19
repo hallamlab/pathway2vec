@@ -3,11 +3,10 @@ This file is used to preprocess the input dataset, and
 train it using pathway2vec model.
 '''
 
-import numpy as np
-import os
 import sys
 import time
 import traceback
+
 from hin import MetaPathGraph
 from model.path2vec import path2vec
 from utility.access_file import load_data
@@ -79,7 +78,7 @@ def __train(arg):
                               display_interval=arg.display_interval)
         model.generate_walks(constraint_type=arg.constraint_type, just_type=arg.just_type,
                              just_memory_size=arg.just_memory_size, use_metapath_scheme=arg.use_metapath_scheme,
-                             metapath_scheme=arg.metapath_scheme, burn_in_phase=arg.burn_in_phase, 
+                             metapath_scheme=arg.metapath_scheme, burn_in_phase=arg.burn_in_phase,
                              burn_in_input_size=arg.burn_in_input_size, hin=hin,
                              save_file_name=arg.file_name, ospath=arg.ospath, dspath=arg.dspath,
                              display_params=display_params)
@@ -93,7 +92,6 @@ def __train(arg):
 
     if arg.train:
         print('\n{0})- Training dataset using pathway2vec model...'.format(steps))
-        steps = steps + 1
         print('\t>> Loading the heterogeneous information network and training samples...')
         hin = load_data(file_name=arg.hin_file, load_path=arg.ospath,
                         tag='heterogeneous information network')
@@ -113,7 +111,6 @@ def __train(arg):
         model.fit(X=X, node_probability=node_probability, index2type=index2type, type2index=hin.type2index,
                   type2prob=hin.type2prob, fit_by_word2vec=arg.fit_by_word2vec, model_name=arg.model_name,
                   model_path=arg.mdpath, result_path=arg.rspath, display_params=display_params)
-        display_params = False
 
 
 def train(arg):
