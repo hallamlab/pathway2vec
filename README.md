@@ -4,7 +4,7 @@
 This repo contains an implementation of *pathway2vec*, a software package consisting of six representational learning-based modules used to automatically generate features for the downstream pathway inference task. Specifically, pathway2vec builds a three-layered network composed of compounds, enzymes, and pathways, where nodes within a layer manifest inter-interactions and nodes between layers manifest betweenness interactions. This layered architecture captures relevant relationships used to learn a neural embedding-based low-dimensional space of metabolic features. The algorithms in pathway2vec were benchmarked based on node-clustering, embedding visualization and pathway prediction using MetaCyc as a trusted source. Remarkably, in the pathway prediction task, results indicate that it is possible to leverage embeddings to improve pathway prediction outcomes.
 
 ## Dependencies
-- The codebase is tested to work under Python 3.5. To install the necessary requirements, run the following commands:
+The codebase is tested to work under Python 3.5. To install the necessary requirements, run the following commands:
 
 ``pip install -r requirements.txt``
 
