@@ -131,7 +131,3 @@ If you find _pathway2vec_ useful in your research, please consider citing the fo
 
 ## Contact
 For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
-
-## Upcoming features
-- Extend the application of random walk methods beyond organismal genomes to predict more complex community level metabolic networks in natural and engineered environments.
-- Make the random walks generation more efficient.
