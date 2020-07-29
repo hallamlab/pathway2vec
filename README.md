@@ -30,7 +30,7 @@ Please download the following preprocessed files from [Zenodo](https://zenodo.or
 - We also provided pretrained models and samples for testing:
     - "hin.pkl": a sample of heterogeneous information network, which is used to generate walks. Based on your tests, you need to generate a heterogeneous information network during preprocessing step. You many use "hin.pkl" to peek into the structure.
     - "X_hin.txt": a sample of generated walks, which is used to learn embeddings. Each line encode a walk rooted at a node beginning of the line. Based on your tests, you need to generate walks during random walks step. You many use "hin.pkl" as a test sample.
-    - "pathway2vec_embeddings.npz": a sample of embeddings (nodes x dimension size). Based on your tests, you need to learn embeddings walks during training step. You many use "hin.pkl" and "X_hin.txt" as test samples.
+    - "pathway2vec_embeddings.npz": a sample of embeddings (nodes, dimension size). Based on your tests, you need to learn embeddings walks during training step. You many use "hin.pkl" and "X_hin.txt" as test samples.
 
 ## Installation and Basic Usage
 Run the following commands to clone the repository to an approriate location:
