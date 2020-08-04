@@ -1,9 +1,9 @@
-__author__ = "Abdurrahman Abul-Basher"
-__date__ = '01/03/2019'
-__copyright__ = "Copyright 2019, The Hallam Lab"
+__author__ = "Abdurr Rahman M. A. Basher"
+__date__ = '03/08/2020'
+__copyright__ = "Copyright 2020, The Hallam Lab"
 __license__ = "GPL v3"
 __version__ = "1.0"
-__maintainer__ = "Abdurrahman Abul-Basher"
+__maintainer__ = "Abdurr Rahman M. A. Basher"
 __email__ = "arbasher@alumni.ubc.ca"
 __status__ = "Production"
 __description__ = "This file is the main entry to perform learning and prediction on dataset using path2vec model."
