@@ -47,26 +47,26 @@ To preprocess graphs, we provide few examples. For all examples: *--hin-file* co
 #### Example 1
 To preprocess three layer graph **all connected**, execute the following command:
 
-``python main.py --preprocess-dataset --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --preprocess-dataset --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 #### Example 2
 To preprocess three layer graph **excluding the connection of the first graph**, execute the following command:
 
-``python main.py --preprocess-dataset --first-graph-not-connected --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --preprocess-dataset --first-graph-not-connected --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 where *--first-graph-not-connected* enables exclusion of connection among the nodes in the first layer.
 
 #### Example 3
 To preprocess three layer graph while **removing isolates**, execute the following command:
 
-``python main.py --preprocess-dataset --remove-isolates --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --preprocess-dataset --remove-isolates --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 where *--remove-isolates* enables the isolation of nodes less than 2 connectivity.
 
 #### Example 4
 To preprocess **two layers graph**, execute the following command:
 
-``python main.py --preprocess-dataset --exclude-third-graph --first-graph-name "ec_graph.pkl" --second-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath [Location to all the files] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --preprocess-dataset --exclude-third-graph --first-graph-name "ec_graph.pkl" --second-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 where *--exclude-third-graph* enables the including two layers only.
 
@@ -80,24 +80,24 @@ Description about arguments in all of given examples: *--burn-in-phase* is the b
 #### Example 1
 To generate *node2vec* random walks, execute the following command:
 
-``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --q 0.5 --walk-length 10 --num-walks 5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --q 0.5 --walk-length 10 --num-walks 5 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath "[path to the hin file]" --dspath "[path where random walks would be stored]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 where *--q* represents in-out parameter that allows the search to differentiate between "inward" and "outward" nodes. The return parameter that controls the likelihood of immediately revisiting a node in the walk will be automatically adjusted.
 
 #### Example 2
 To generate *metapath2vec* random walks, execute the following command:
 
-``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --walk-length 10 --num-walks 5 --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --walk-length 10 --num-walks 5 --metapath-scheme "ECTCE" --use-metapath-scheme --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath "[path to the hin file]" --dspath "[path where random walks would be stored]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 #### Example 3
 To generate *JUST* random walks, execute the following command:
 
-``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --extract-instance --burn-in-phase 1 --burn-in-input-size 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 2 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath "[path to the hin file]" --dspath "[path where random walks would be stored]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
     
 #### Example 4
 To generate *RUST* random walks, execute the following command with :
 
-``python main.py --extract-instance --burn-in-phase 3 --burn-in-input-size 0.3 --q 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath [Location to the hin file] --dspath [Location to store the generated walks] --logpath "[Location to the log directory]" --num-jobs 2``
+``python main.py --extract-instance --burn-in-phase 3 --burn-in-input-size 0.3 --q 0.3 --walk-length 10 --num-walks 5 --just-type --just-memory-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the file without extension]" --ospath "[path to the hin file]" --dspath "[path where random walks would be stored]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 For RUST, it is better to use *--burn-in-phase = 3*. *--file-name* corresponds to the desired file name, excluding any *EXTENSION*. The file will have *.txt* extension. The argument *--q* represents the probability to explore within layer nodes (breadth-search). The in-depth search will be automatically adjusted based on unit circle equation.
 
@@ -112,17 +112,17 @@ Description about arguments in all of given examples: *--file-name* corresponds 
 #### Example 1
 To learn embeddings using dimension size *--embedding-dim* 128, context size *--window-size* 3, Number of samples to be considered within defined context size *--num-skips* 2, execute the following command:
 
-``python main.py --train --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the generated hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath "[Location for storing costs]" --logpath "[Location to the log directory]" --num-epochs 3 --num-jobs 2``
+``python main.py --train --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the generated hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath "[path where embeddings would be stored]" --rspath "[path to storing the cost values]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-epochs 3 --num-jobs 2``
 
 #### Example 2
 To learn embeddings using the same above parameter settings but with *metapath2vec++*, execute the following command:
 
-``python main.py --train --constraint-type --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath "[Location for storing costs]" --logpath "[Location to the log directory]" --num-epochs 3 --num-jobs 2``
+``python main.py --train --constraint-type --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath "[path where embeddings would be stored]" --rspath "[path to storing the cost values]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-epochs 3 --num-jobs 2``
 
 #### Example 3
 To learn embeddings using the same above parameter settings but with *metapath2vec++* and trained using *gensim* package, execute the following command:
 
-``python main.py --train --fit-by-word2vec --constraint-type --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath [Location for storing the learned embeddings] --rspath "[Location for storing costs]" --logpath "[Location to the log directory]" --num-epochs 3 --num-jobs 2``
+``python main.py --train --fit-by-word2vec --constraint-type --embedding-dim 128 --num-skips 2 --window-size 3 --hin-file "[Name of the hin file].pkl" --file-name "[Name of the .txt file]" --model-name "[Model name without extension]" --mdpath "[path where embeddings would be stored]" --rspath "[path to storing the cost values]" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-epochs 3 --num-jobs 2``
 
 
 ## Citing
