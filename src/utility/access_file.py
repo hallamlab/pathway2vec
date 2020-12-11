@@ -1,10 +1,11 @@
 import json
-import networkx as nx
-import numpy as np
 import os
 import pickle as pkl
 import sys
 import traceback
+
+import networkx as nx
+import numpy as np
 from networkx.readwrite import json_graph
 from scipy.sparse import lil_matrix
 

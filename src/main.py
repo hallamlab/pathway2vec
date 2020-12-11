@@ -12,8 +12,9 @@ import datetime
 import json
 import os
 import textwrap
-import utility.file_path as fph
 from argparse import ArgumentParser
+
+import utility.file_path as fph
 from train import train
 from utility.arguments import Arguments
 

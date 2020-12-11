@@ -5,14 +5,16 @@ represented as graphs and to generate random walks.
 
 import collections
 import logging
-import networkx as nx
-import numpy as np
 import os
 import sys
 import time
 import warnings
 from multiprocessing import Pool
+
+import networkx as nx
+import numpy as np
 from scipy.sparse import lil_matrix
+
 from utility.access_file import save_data
 
 EPSILON = 0.0001
