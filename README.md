@@ -147,7 +147,7 @@ To learn embeddings using the same above parameter settings but with *metapath2v
 
 If you find _pathway2vec_ useful in your research, please consider citing the following paper:
 
-- M. A. Basher, Abdur Rahman, and Hallam, Steven J.. **["Leveraging Heterogeneous Network Embedding for Metabolic Pathway Prediction"](https://www.biorxiv.org/content/10.1101/2020.02.20.940205v2.abstract)**, bioRxiv (2020).
+- M. A. Basher, Abdur Rahman, and Hallam, Steven J.. **["Leveraging Heterogeneous Network Embedding for Metabolic Pathway Prediction"](https://doi.org/10.1093/bioinformatics/btaa906)**, Bioinformatics (2020).
 
 ## Contact
 
