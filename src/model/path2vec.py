@@ -17,7 +17,6 @@ from tensorflow.contrib.tensorboard.plugins import projector
 from utility.access_file import save_data
 
 logger = logging.getLogger(__name__)
-EPSILON = np.finfo(np.float32).eps
 
 
 class path2vec(object):

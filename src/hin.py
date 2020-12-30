@@ -17,7 +17,7 @@ from scipy.sparse import lil_matrix
 
 from utility.access_file import save_data
 
-EPSILON = 0.0001
+EPSILON = 0.001
 
 logger = logging.getLogger(__name__)
 
@@ -322,18 +322,18 @@ class MetaPathGraph(object):
 
                 if hin.trans_constraint_type or hin.trans_just_type:
                     # Compute the transition probability based on types of the current node's neighbours.
-                    # We further smooth the transition probabilities by adding 0.001 to weights of current
+                    # We further smooth the transition probabilities by adding EPSILON to weights of current
                     # node, next node and current node type.
                     trans_node_type = [self.__alpha(next_node=hin.nodes[next_node]['mapped_idx'],
                                                     next_node_type=neigh_type_curr_node[idx],
                                                     curr_node_type=curr_node_data['type'],
                                                     weight_curr_node=len(
-                                                        list(hin.neighbors(next_node))) + 0.001,
+                                                        list(hin.neighbors(next_node))) + EPSILON,
                                                     weight_curr_node_type=sum(
-                                                        neigh_type_curr_node == curr_node_data['type']) + 0.001,
+                                                        neigh_type_curr_node == curr_node_data['type']) + EPSILON,
                                                     weight_next_node_type=sum(
                                                         neigh_type_curr_node == hin.nodes[next_node][
-                                                            'type']) + 0.001,
+                                                            'type']) + EPSILON,
                                                     explore_layer=hin.trans_just_type, constraint_type=True)
                                        for idx, next_node in enumerate(list_neigh_curr_node)]
                     trans_node_type = np.multiply(trans_node_type, trans_from_curr_node)
@@ -370,11 +370,11 @@ class MetaPathGraph(object):
                     list_neigh_curr_node = np.array([node[0] for node in list_neigh_curr_node])
 
                 # Compute the transition probability of the current node's neighbours based on the chosen type.
-                # We further smooth the transition probabilities by adding 0.001 to weights of current node.
+                # We further smooth the transition probabilities by adding EPSILON to weights of current node.
                 trans_prob_next_node = [
                     self.__alpha(next_node=hin.nodes[next_node]['mapped_idx'], prev_node=prev_node_idx,
                                  neighbours_prev_node=list_neigh_idx_prev_node,
-                                 weight_curr_node=len(list(hin.neighbors(next_node))) + 0.001)
+                                 weight_curr_node=len(list(hin.neighbors(next_node))) + EPSILON)
                     for next_node in list_neigh_curr_node]
                 trans_prob_next_node = np.multiply(trans_prob_next_node, trans_from_curr_node)
                 trans_prob_next_node = trans_prob_next_node / np.sum(trans_prob_next_node)
