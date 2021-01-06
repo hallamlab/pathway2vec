@@ -70,13 +70,13 @@ provided "hin.pkl" in a different folder to avoid conflict.
 
 To preprocess three layer graph **all connected**, execute the following command:
 
-``python main.py --preprocess-dataset --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
+``python main.py --preprocess-dataset --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 #### Example 2
 
 To preprocess three layer graph **excluding the connection of the first graph**, execute the following command:
 
-``python main.py --preprocess-dataset --first-graph-not-connected --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
+``python main.py --preprocess-dataset --first-graph-not-connected --first-graph-name "ec_graph.pkl" --second-graph-name "compound_graph.pkl" --third-graph-name "pathway_graph.pkl" --first-mapping-file-name "ec2compound.pkl" --second-mapping-file-name "compound2pathway.pkl" --hin-file "[Name of the hin file].pkl" --ospath "[path to all object files]" --logpath "[path to the log directory]" --num-jobs 2``
 
 where *--first-graph-not-connected* enables exclusion of connection among the nodes in the first layer.
 
