@@ -140,6 +140,8 @@ class MetaPathGraph(object):
         if third_graph is not None:
             if self.third_graph_is_directed:
                 third_graph = nx.Graph(third_graph).to_directed()
+        # Betweenness centrality of an edge is the sum of the fraction 
+        # of all-pairs shortest paths that pass through that edge
         if self.weighted_within_layers:
             ebc = nx.edge_betweenness_centrality(first_graph, normalized=True)
             nx.set_edge_attributes(first_graph, values=ebc, name='weight')
