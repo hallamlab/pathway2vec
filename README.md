@@ -184,4 +184,4 @@ If you find _pathway2vec_ useful in your research, please consider citing the fo
 
 ## Contact
 
-For any inquiries, please contact: [arbasher@alumni.ubc.ca](mailto:arbasher@alumni.ubc.ca)
+For any inquiries, please contact: [arbasher@student.ubc.ca](mailto:arbasher@student.ubc.ca)
