@@ -131,8 +131,8 @@ class MetaPathGraph(object):
         if error:
             raise Exception(desc)
 
-    def __compose_graphs(self, first_graph, second_graph, first_adjaceny_matrix, third_graph=None,
-                         second_adjaceny_matrix=None):
+    def __compose_graphs(self, first_graph, second_graph, first_association_matrix, third_graph=None,
+                         second_association_matrix=None):
         if self.first_graph_is_directed:
             first_graph = nx.Graph(first_graph).to_directed()
         if self.second_graph_is_directed:
@@ -181,13 +181,13 @@ class MetaPathGraph(object):
                 print(desc)
             count = count + 1
             e_idx = int(e_data['idx'])
-            c_list = np.nonzero(first_adjaceny_matrix[e_idx, :])[1]
+            c_list = np.nonzero(first_association_matrix[e_idx, :])[1]
             for c_idx in c_list:
                 c_id = list(second_tmp.keys())[list(second_tmp.values()).index(c_idx)]
                 if not hin.has_edge(e_id, c_id):
                     hin.add_edges_from([(e_id, c_id, {'weight': 1})])
                 if third_graph is not None:
-                    p_list = np.nonzero(second_adjaceny_matrix[c_idx, :])[1]
+                    p_list = np.nonzero(second_association_matrix[c_idx, :])[1]
                     for p_idx in p_list:
                         p_id = list(third_tmp.keys())[list(third_tmp.values()).index(p_idx)]
                         if not hin.has_edge(c_id, p_id):
@@ -203,8 +203,8 @@ class MetaPathGraph(object):
         print('\t>> Building a multi-modal graph...')
         logger.info('\t>> Building a multi-modal graph...')
         hin = self.__compose_graphs(first_graph=first_graph, second_graph=second_graph,
-                                    first_adjaceny_matrix=first_mapping_file, third_graph=third_graph,
-                                    second_adjaceny_matrix=second_mapping_file)
+                                    first_association_matrix=first_mapping_file, third_graph=third_graph,
+                                    second_association_matrix=second_mapping_file)
         if self.remove_isolates:
             print('\t\t--> Removing {0:d} isolated nodes from the multi-modal graph...'.format(
                 len(list(nx.isolates(hin)))))

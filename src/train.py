@@ -41,19 +41,19 @@ def __train(arg):
                               num_walks=arg.num_walks, walk_length=arg.walk_length,
                               learning_rate=arg.learning_rate, num_jobs=arg.num_jobs,
                               display_interval=arg.display_interval)
-        print('\t>> Loading graphs and incidence matrices...')
+        print('\t>> Loading graphs and association matrices...')
         first_graph = load_data(file_name=arg.first_graph_name, load_path=arg.ospath, tag='first graph')
         second_graph = load_data(file_name=arg.second_graph_name, load_path=arg.ospath,
                                  tag='second graph')
         first_mapping_file = load_data(file_name=arg.first_mapping_file_name, load_path=arg.ospath,
-                                       tag='incidence matrix of first to second graphs')
+                                       tag='association matrix of first to second graphs')
         third_graph = None
         second_mapping_file = None
         if arg.include_third_graph:
             third_graph = load_data(file_name=arg.third_graph_name, load_path=arg.ospath,
                                     tag='third graph')
             second_mapping_file = load_data(file_name=arg.second_mapping_file_name, load_path=arg.ospath,
-                                            tag='incidence matrix of second to  third graphs')
+                                            tag='association matrix of second to  third graphs')
         model.parse_graph_to_hin(first_graph=first_graph, second_graph=second_graph, third_graph=third_graph,
                                  first_mapping_file=first_mapping_file, second_mapping_file=second_mapping_file,
                                  hin_file=arg.hin_file, ospath=arg.ospath, display_params=display_params)
